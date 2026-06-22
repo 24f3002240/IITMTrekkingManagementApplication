@@ -1,2 +1,3 @@
-# IITMPlacementPortal
-placement portal project given by iitm 
+# IITMTrekkingManagementApplication
+Trekking Management Application
+ portal project given by iitm 
