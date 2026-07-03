@@ -1,0 +1,17 @@
+# Virtual environment — regenerable via `pip install -r requirements.txt`
+venv/
+
+# Python bytecode cache — auto-regenerated on every run, machine-specific
+__pycache__/
+*.pyc
+
+# SQLite database — must be created PROGRAMMATICALLY, not shipped as a file
+instance/*.db
+
+# Environment variables / secrets (if you add a .env file later for SECRET_KEY, etc.)
+.env
+
+# Editor/OS junk
+.vscode/
+.DS_Store
+Thumbs.db
