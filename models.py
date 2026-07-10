@@ -1,10 +1,10 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_login import UserMixin
 db = SQLAlchemy()
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -21,9 +21,11 @@ class User(db.Model):
         db.CheckConstraint("approval_status IN ('pending', 'approved')", name='check_valid_approval_status'),
     )
 
+    def is_active(self):
+        return not self.is_blacklisted
+
     def __repr__(self):
         return f'<User {self.email} ({self.role})>'
-
 
 class Trek(db.Model):
     __tablename__ = 'treks'

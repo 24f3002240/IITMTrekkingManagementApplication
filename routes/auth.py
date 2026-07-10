@@ -6,59 +6,40 @@ from models import db, User
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@auth_bp.route('/register/user', methods=['GET', 'POST'])
-def register_user():
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
     if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
+        role = request.form.get('role')
+
+        if role not in ('user', 'staff'):
+            flash('Invalid registration type.', 'danger')
+            return redirect(url_for('auth.register'))
 
         existing = User.query.filter_by(email=email).first()
         if existing:
             flash('Email already registered.', 'danger')
-            return redirect(url_for('auth.register_user'))
+            return redirect(url_for('auth.register'))
 
-        new_user = User(
+        new_account = User(
             name=name,
             email=email,
             password_hash=generate_password_hash(password),
-            role='user',
+            role=role,
+            approval_status='pending' if role == 'staff' else 'approved',
         )
-        db.session.add(new_user)
+        db.session.add(new_account)
         db.session.commit()
 
-        flash('Registration successful. Please log in.', 'success')
+        if role == 'staff':
+            flash('Registration submitted. Await admin approval before logging in.', 'info')
+        else:
+            flash('Registration successful. Please log in.', 'success')
         return redirect(url_for('auth.login'))
 
-    return render_template('auth/register.html', role='user')
-
-
-@auth_bp.route('/register/staff', methods=['GET', 'POST'])
-def register_staff():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        existing = User.query.filter_by(email=email).first()
-        if existing:
-            flash('Email already registered.', 'danger')
-            return redirect(url_for('auth.register_staff'))
-
-        new_staff = User(
-            name=name,
-            email=email,
-            password_hash=generate_password_hash(password),
-            role='staff',
-            approval_status='pending',
-        )
-        db.session.add(new_staff)
-        db.session.commit()
-
-        flash('Registration submitted. Await admin approval before logging in.', 'info')
-        return redirect(url_for('auth.login'))
-
-    return render_template('auth/register.html', role='staff')
+    return render_template('auth/register.html')
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
@@ -88,6 +69,7 @@ def login():
         elif user.role == 'staff':
             return redirect(url_for('staff.dashboard'))
         else:
+            print("i am in user")
             return redirect(url_for('user.dashboard'))
 
     return render_template('auth/login.html')
@@ -99,3 +81,6 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth.login'))
+
+
+
