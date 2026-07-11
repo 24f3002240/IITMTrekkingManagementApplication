@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard{% endblock %}
+
+{% block content %}
+<h3 class="mb-4">My Assigned Treks</h3>
+
+{% if my_treks %}
+{% for trek in my_treks %}
+<div class="card mb-3 shadow-sm">
+    <div class="card-body">
+        <h5 class="card-title">{{ trek.name }}</h5>
+        <p class="text-muted mb-1">Location: {{ trek.location }} | Difficulty: {{ trek.difficulty }}</p>
+        <p class="mb-2">
+            Status: <span class="badge bg-secondary">{{ trek.status }}</span>
+            &nbsp;|&nbsp; Available Slots: {{ trek.available_slots }}
+        </p>
+
+        <form method="POST" action="{{ url_for('staff.update_trek', trek_id=trek.id) }}"
+            class="row g-2 align-items-end">
+            <div class="col-auto">
+                <label class="form-label mb-0">Status</label>
+                <select class="form-select form-select-sm" name="status">
+                    <option value="">-- no change --</option>
+                    {% if trek.status == 'Approved' %}
+                    <option value="Open">Open</option>
+                    {% elif trek.status == 'Open' %}
+                    <option value="Closed">Closed</option>
+                    <option value="Completed">Completed</option>
+                    {% elif trek.status == 'Closed' %}
+                    <option value="Open">Open</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <label class="form-label mb-0">Slots</label>
+                <input type="number" class="form-control form-control-sm" name="available_slots"
+                    value="{{ trek.available_slots }}" min="0" style="width: 100px;">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+            </div>
+        </form>
+
+        <a href="{{ url_for('staff.view_participants', trek_id=trek.id) }}" class="btn btn-sm btn-outline-primary mt-2">
+            View Participants
+        </a>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-info">No treks assigned to you yet.</div>
+{% endif %}
+
+{% endblock %}

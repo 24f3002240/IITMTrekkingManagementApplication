@@ -40,6 +40,7 @@ class Trek(db.Model):
     start_date=db.Column(db.Date)
     end_date=db.Column(db.Date)
     assigned_staff_id=db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    assigned_staff = db.relationship('User', backref='assigned_treks', foreign_keys=[assigned_staff_id])
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     __table_args__ = (

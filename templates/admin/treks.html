@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Manage Treks{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>All Treks</h3>
+    <a href="{{ url_for('admin.create_trek') }}" class="btn btn-primary">+ New Trek</a>
+</div>
+
+{% if treks %}
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Difficulty</th>
+            <th>Slots</th>
+            <th>Status</th>
+            <th>Assigned Staff</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trek in treks %}
+        <tr>
+            <td>{{ trek.name }}</td>
+            <td>{{ trek.location }}</td>
+            <td>{{ trek.difficulty }}</td>
+            <td>{{ trek.available_slots }}</td>
+            <td>
+                {% if trek.status == 'Pending' %}
+                <span class="badge bg-secondary">Pending</span>
+                {% elif trek.status == 'Approved' %}
+                <span class="badge bg-info">Approved</span>
+                {% elif trek.status == 'Open' %}
+                <span class="badge bg-success">Open</span>
+                {% elif trek.status == 'Closed' %}
+                <span class="badge bg-warning">Closed</span>
+                {% elif trek.status == 'Completed' %}
+                <span class="badge bg-dark">Completed</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if trek.assigned_staff_id %}
+                {{ trek.assigned_staff.name }}
+                {% else %}
+                <span class="text-muted">Unassigned</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if trek.status == 'Pending' %}
+                <form method="POST" action="{{ url_for('admin.approve_trek', trek_id=trek.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                </form>
+                {% endif %}
+                {% if not trek.assigned_staff_id %}
+                <a href="{{ url_for('admin.assign_staff', trek_id=trek.id) }}" class="btn btn-sm btn-outline-primary">
+                    Assign Staff
+                </a>
+                {% endif %}
+            </td>
+            <td>
+                {% if trek.status == 'Pending' %}
+                <form method="POST" action="{{ url_for('admin.approve_trek', trek_id=trek.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                </form>
+                {% endif %}
+                {% if not trek.assigned_staff_id %}
+                <a href="{{ url_for('admin.assign_staff', trek_id=trek.id) }}" class="btn btn-sm btn-outline-primary">
+                    Assign Staff
+                </a>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('admin.delete_trek', trek_id=trek.id) }}" class="d-inline"
+                    onsubmit="return confirm('Delete {{ trek.name }}? This cannot be undone.');">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">No treks created yet.</div>
+{% endif %}
+{% endblock %}

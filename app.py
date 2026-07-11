@@ -17,12 +17,16 @@ def create_app():
     
     from routes.auth import auth_bp
     app.register_blueprint(auth_bp)
+
     from routes.user import user_bp
     app.register_blueprint(user_bp)
+    
     from routes.admin import admin_bp
     app.register_blueprint(admin_bp)
-    return app
 
+    from routes.staff import staff_bp
+    app.register_blueprint(staff_bp)
+    return app
 
 @login_manager.user_loader
 def load_user(user_id):
