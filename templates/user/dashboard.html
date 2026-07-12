@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between mb-4">
+    <h3>My Bookings</h3>
+    <a href="{{ url_for('user.available_treks') }}" class="btn btn-primary">Browse Treks</a>
+</div>
+
+{% if my_bookings %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Trek</th>
+            <th>Booked On</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in my_bookings %}
+        <tr>
+            <td>{{ booking.trek.name }}</td>
+            <td>{{ booking.booking_date.strftime('%d %b %Y') }}</td>
+            <td>
+                {% if booking.status == 'Booked' %}
+                <span class="badge bg-success">{{ booking.status }}</span>
+                {% elif booking.status == 'Cancelled' %}
+                <span class="badge bg-danger">{{ booking.status }}</span>
+                {% elif booking.status == 'Completed' %}
+                <span class="badge bg-secondary">{{ booking.status }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if booking.status == 'Booked' %}
+                <form method="POST" action="{{ url_for('user.cancel_booking', booking_id=booking.id) }}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                </form>
+                {% else %}
+                <span class="text-muted">—</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">No bookings yet. <a href="{{ url_for('user.available_treks') }}">Browse available
+        treks</a>.</div>
+{% endif %}
+{% endblock %}

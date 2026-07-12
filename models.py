@@ -58,12 +58,16 @@ class Booking(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    trek_id=db.Column(db.Integer, db.ForeignKey('treks.id'), nullable=False)
-    booking_date=db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(10), nullable=False,default='Booked')
-    
+    trek_id = db.Column(db.Integer, db.ForeignKey('treks.id'), nullable=False)
+    booking_date = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(60), nullable=False, default='Booked')
+
+    user = db.relationship('User', backref='bookings')
+    trek = db.relationship('Trek', backref='bookings')
+
     __table_args__ = (
         db.CheckConstraint("status IN ('Booked', 'Cancelled', 'Completed')", name='check_valid_status'),
     )
+
     def __repr__(self):
         return f'<Booking {self.id} ({self.status})>'
