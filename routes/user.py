@@ -11,7 +11,8 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 @role_required('user')
 def dashboard():
     my_bookings = Booking.query.filter_by(user_id=current_user.id).order_by(Booking.booking_date.desc()).all()
-    return render_template('user/dashboard.html', my_bookings=my_bookings)
+    preview_treks = Trek.query.filter_by(status='Open').limit(3).all()
+    return render_template('user/dashboard.html', my_bookings=my_bookings, preview_treks=preview_treks)
 
 
 @user_bp.route('/treks')

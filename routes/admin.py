@@ -241,3 +241,63 @@ def list_treks():
 
     treks = query.all()
     return render_template('admin/treks.html', treks=treks, search=search)
+
+@admin_bp.route('/bookings')
+@login_required
+@role_required('admin')
+def list_bookings():
+    bookings = Booking.query.order_by(Booking.booking_date.desc()).all()
+    return render_template('admin/bookings.html', bookings=bookings)
+
+
+@admin_bp.route('/trek/<int:trek_id>/edit', methods=['GET', 'POST'])
+@login_required
+@role_required('admin')
+def edit_trek(trek_id):
+    trek = Trek.query.get_or_404(trek_id)
+
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        location = request.form.get('location', '').strip()
+        difficulty = request.form.get('difficulty')
+        duration_days = request.form.get('duration_days')
+        start_date_str = request.form.get('start_date')
+        end_date_str = request.form.get('end_date')
+
+        if not name or not location:
+            flash('Name and location cannot be empty.', 'danger')
+            return redirect(url_for('admin.edit_trek', trek_id=trek.id))
+
+        if difficulty not in ('Easy', 'Moderate', 'Hard'):
+            flash('Invalid difficulty selected.', 'danger')
+            return redirect(url_for('admin.edit_trek', trek_id=trek.id))
+
+        try:
+            duration_days = int(duration_days)
+            if duration_days <= 0:
+                raise ValueError
+        except (ValueError, TypeError):
+            flash('Duration must be a valid positive number.', 'danger')
+            return redirect(url_for('admin.edit_trek', trek_id=trek.id))
+
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date() if start_date_str else None
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else None
+
+        if start_date and end_date:
+            actual_days = (end_date - start_date).days + 1
+            if actual_days != duration_days:
+                flash(f'Duration ({duration_days} days) does not match the date range ({actual_days} days).', 'danger')
+                return redirect(url_for('admin.edit_trek', trek_id=trek.id))
+
+        trek.name = name
+        trek.location = location
+        trek.difficulty = difficulty
+        trek.duration_days = duration_days
+        trek.start_date = start_date
+        trek.end_date = end_date
+
+        db.session.commit()
+        flash(f'Trek "{trek.name}" updated.', 'success')
+        return redirect(url_for('admin.list_treks'))
+
+    return render_template('admin/edit_trek.html', trek=trek)

@@ -13,6 +13,7 @@
         <p class="mb-2">
             Status: <span class="badge bg-secondary">{{ trek.status }}</span>
             &nbsp;|&nbsp; Available Slots: {{ trek.available_slots }}
+            &nbsp;|&nbsp; Registered: {{ trek_booking_counts.get(trek.id, 0) }}
         </p>
 
         <form method="POST" action="{{ url_for('staff.update_trek', trek_id=trek.id) }}"

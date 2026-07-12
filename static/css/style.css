@@ -1,0 +1,61 @@
+:root {
+    --brand-primary: #2D5F4C;
+    --brand-primary-dark: #234a3b;
+    --brand-accent: #C97B3F;
+}
+
+body {
+    background-color: #FAFAF8;
+}
+
+.navbar.bg-dark {
+    background-color: var(--brand-primary-dark) !important;
+    border-bottom: 3px solid var(--brand-accent);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.btn-primary {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--brand-primary-dark);
+    border-color: var(--brand-primary-dark);
+}
+
+.btn-outline-primary {
+    color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(45, 95, 76, 0.08);
+}
+
+.card:hover {
+    box-shadow: 0 4px 14px rgba(45, 95, 76, 0.14);
+    transition: box-shadow 0.15s ease;
+}
+
+.table thead {
+    background-color: #EFF3F0;
+}
+
+footer {
+    color: #8a8a85;
+    font-size: 0.85rem;
+    padding: 1.5rem 0;
+    text-align: center;
+}

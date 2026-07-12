@@ -2,8 +2,29 @@
 {% block title %}My Dashboard{% endblock %}
 
 {% block content %}
+
+<h4 class="mb-3">Available Treks</h4>
+{% if preview_treks %}
+<div class="row mb-4">
+    {% for trek in preview_treks %}
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-title">{{ trek.name }}</h6>
+                <p class="text-muted small mb-1">{{ trek.location }} &middot; {{ trek.difficulty }}</p>
+                <p class="small mb-0">{{ trek.available_slots }} slots left</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<a href="{{ url_for('user.available_treks') }}" class="btn btn-sm btn-outline-primary mb-4">View All Treks</a>
+{% else %}
+<div class="alert alert-info mb-4">No treks currently open.</div>
+{% endif %}
+
 <div class="d-flex justify-content-between mb-4">
-    <h3>My Bookings</h3>
+    <h3 class="mb-0">My Bookings</h3>
     <a href="{{ url_for('user.available_treks') }}" class="btn btn-primary">Browse Treks</a>
 </div>
 

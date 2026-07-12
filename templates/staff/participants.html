@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Participants - {{ trek.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Participants: {{ trek.name }}</h3>
+    <a href="{{ url_for('staff.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+</div>
+
+<p class="text-muted mb-4">{{ trek.location }} &middot; {{ trek.difficulty }} &middot; {{ bookings|length }} registered
+</p>
+
+{% if bookings %}
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Booked On</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.user.name }}</td>
+            <td>{{ booking.user.email }}</td>
+            <td>{{ booking.booking_date.strftime('%d %b %Y') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">No participants registered for this trek yet.</div>
+{% endif %}
+{% endblock %}

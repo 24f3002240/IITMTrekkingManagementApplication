@@ -12,8 +12,13 @@ staff_bp = Blueprint('staff', __name__, url_prefix='/staff')
 @role_required('staff')
 def dashboard():
     my_treks = Trek.query.filter_by(assigned_staff_id=current_user.id).all()
-    return render_template('staff/dashboard.html', my_treks=my_treks)
 
+    trek_booking_counts = {
+        trek.id: Booking.query.filter_by(trek_id=trek.id, status='Booked').count()
+        for trek in my_treks
+    }
+
+    return render_template('staff/dashboard.html', my_treks=my_treks, trek_booking_counts=trek_booking_counts)
 
 @staff_bp.route('/trek/<int:trek_id>/update', methods=['POST'])
 @login_required
