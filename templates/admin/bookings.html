@@ -2,41 +2,45 @@
 {% block title %}All Bookings{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="mb-0">All Bookings</h3>
-    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+
+<div class="page-header">
+    <h3>📋 All Bookings</h3>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">← Dashboard</a>
 </div>
 
 {% if bookings %}
-<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th>User</th>
-            <th>Trek</th>
-            <th>Booked On</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for booking in bookings %}
-        <tr>
-            <td>{{ booking.user.name }}</td>
-            <td>{{ booking.trek.name }}</td>
-            <td>{{ booking.booking_date.strftime('%d %b %Y') }}</td>
-            <td>
-                {% if booking.status == 'Booked' %}
-                <span class="badge bg-success">{{ booking.status }}</span>
-                {% elif booking.status == 'Cancelled' %}
-                <span class="badge bg-danger">{{ booking.status }}</span>
-                {% elif booking.status == 'Completed' %}
-                <span class="badge bg-secondary">{{ booking.status }}</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-wrapper animate-in">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Trekker</th>
+                <th>Trek</th>
+                <th>Booked On</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td class="fw-semibold">{{ booking.user.name }}</td>
+                <td>{{ booking.trek.name }}</td>
+                <td class="text-muted">{{ booking.booking_date.strftime('%d %b %Y') }}</td>
+                <td>
+                    {% if booking.status == 'Booked' %}
+                    <span class="badge bg-success">✓ Booked</span>
+                    {% elif booking.status == 'Cancelled' %}
+                    <span class="badge bg-danger">Cancelled</span>
+                    {% elif booking.status == 'Completed' %}
+                    <span class="badge bg-dark">Completed</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <div class="alert alert-info">No bookings yet.</div>
 {% endif %}
+
 {% endblock %}

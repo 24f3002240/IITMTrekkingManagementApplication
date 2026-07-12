@@ -2,90 +2,101 @@
 {% block title %}Manage Treks{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="mb-0">All Treks</h3>
-    <div>
-        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+
+<div class="page-header">
+    <h3>🏔️ All Treks</h3>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">← Dashboard</a>
         <a href="{{ url_for('admin.create_trek') }}" class="btn btn-primary">+ New Trek</a>
     </div>
 </div>
 
-<form method="GET" action="{{ url_for('admin.list_treks') }}" class="row g-2 mb-4">
-    <div class="col-auto">
-        <input type="text" name="search" class="form-control" placeholder="Search by name or ID" value="{{ search }}">
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
-    <div class="col-auto">
-        <a href="{{ url_for('admin.list_treks') }}" class="btn btn-outline-secondary">Clear</a>
-    </div>
+<!-- Filter Bar -->
+<form method="GET" action="{{ url_for('admin.list_treks') }}" class="filter-bar">
+    <input type="text" name="search" class="form-control" style="max-width:260px;"
+        placeholder="🔍  Search by name or ID" value="{{ search }}">
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a href="{{ url_for('admin.list_treks') }}" class="btn btn-outline-secondary">Clear</a>
 </form>
 
 {% if treks %}
-<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Location</th>
-            <th>Difficulty</th>
-            <th>Slots</th>
-            <th>Status</th>
-            <th>Assigned Staff</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for trek in treks %}
-        <tr>
-            <td>{{ trek.name }}</td>
-            <td>{{ trek.location }}</td>
-            <td>{{ trek.difficulty }}</td>
-            <td>{{ trek.available_slots }}</td>
-            <td>
-                {% if trek.status == 'Pending' %}
-                <span class="badge bg-secondary">Pending</span>
-                {% elif trek.status == 'Approved' %}
-                <span class="badge bg-info">Approved</span>
-                {% elif trek.status == 'Open' %}
-                <span class="badge bg-success">Open</span>
-                {% elif trek.status == 'Closed' %}
-                <span class="badge bg-warning">Closed</span>
-                {% elif trek.status == 'Completed' %}
-                <span class="badge bg-dark">Completed</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if trek.assigned_staff_id %}
-                {{ trek.assigned_staff.name }}
-                {% else %}
-                <span class="text-muted">Unassigned</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if trek.status == 'Pending' %}
-                <form method="POST" action="{{ url_for('admin.approve_trek', trek_id=trek.id) }}" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                </form>
-                {% endif %}
-                {% if not trek.assigned_staff_id %}
-                <a href="{{ url_for('admin.assign_staff', trek_id=trek.id) }}" class="btn btn-sm btn-outline-primary">
-                    Assign Staff
-                </a>
-                {% endif %}
-                <form method="POST" action="{{ url_for('admin.delete_trek', trek_id=trek.id) }}" class="d-inline"
-                    onsubmit="return confirm('Delete {{ trek.name }}? This cannot be undone.');">
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                </form>
-
-                <a href="{{ url_for('admin.edit_trek', trek_id=trek.id) }}"
-                    class="btn btn-sm btn-outline-secondary">Edit</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-wrapper animate-in">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Trek</th>
+                <th>Location</th>
+                <th>Difficulty</th>
+                <th>Slots</th>
+                <th>Status</th>
+                <th>Staff</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trek in treks %}
+            <tr>
+                <td class="fw-semibold" style="color:var(--green-900);">{{ trek.name }}</td>
+                <td class="text-muted">📍 {{ trek.location }}</td>
+                <td>
+                    {% if trek.difficulty == 'Easy' %}
+                    <span class="badge-difficulty badge-easy">🟢 Easy</span>
+                    {% elif trek.difficulty == 'Moderate' %}
+                    <span class="badge-difficulty badge-moderate">🟡 Moderate</span>
+                    {% else %}
+                    <span class="badge-difficulty badge-hard">🔴 Hard</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="fw-semibold">{{ trek.available_slots }}</span>
+                    <span class="text-muted"> left</span>
+                </td>
+                <td>
+                    {% if trek.status == 'Pending' %}
+                    <span class="badge bg-secondary">Pending</span>
+                    {% elif trek.status == 'Approved' %}
+                    <span class="badge bg-info">Approved</span>
+                    {% elif trek.status == 'Open' %}
+                    <span class="badge bg-success">Open</span>
+                    {% elif trek.status == 'Closed' %}
+                    <span class="badge bg-warning">Closed</span>
+                    {% elif trek.status == 'Completed' %}
+                    <span class="badge bg-dark">Completed</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if trek.assigned_staff_id %}
+                    <span class="fw-semibold">{{ trek.assigned_staff.name }}</span>
+                    {% else %}
+                    <span class="text-muted fst-italic">Unassigned</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="d-flex gap-1 flex-wrap">
+                        {% if trek.status == 'Pending' %}
+                        <form method="POST" action="{{ url_for('admin.approve_trek', trek_id=trek.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-success">✓ Approve</button>
+                        </form>
+                        {% endif %}
+                        {% if not trek.assigned_staff_id %}
+                        <a href="{{ url_for('admin.assign_staff', trek_id=trek.id) }}" class="btn btn-sm btn-outline-primary">
+                            Assign
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('admin.edit_trek', trek_id=trek.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <form method="POST" action="{{ url_for('admin.delete_trek', trek_id=trek.id) }}" class="d-inline"
+                            onsubmit="return confirm('Delete {{ trek.name }}? This cannot be undone.');">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <div class="alert alert-info">No treks match your search.</div>
 {% endif %}
+
 {% endblock %}

@@ -1,45 +1,61 @@
 {% extends "base.html" %}
-
-{% block title %}Register - Trekking Management{% endblock %}
+{% block title %}Register — TrekIIT{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title mb-4">Register</h3>
-                <form method="POST" action="{{ url_for('auth.register') }}">
-                    <div class="mb-3">
-                        <label class="form-label d-block">Register as</label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="role" id="role_user" value="user" checked>
-                            <label class="form-check-label" for="role_user">Trekker</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="role" id="role_staff" value="staff">
-                            <label class="form-check-label" for="role_staff">Trek Staff</label>
-                        </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
+<!-- ── Auth Background ── -->
+<div class="auth-bg">
+    <div class="auth-bg-overlay"></div>
+</div>
+
+<!-- ── Register Card ── -->
+<div class="auth-wrapper">
+    <div class="auth-card animate-in">
+        <div class="form-card-header">
+            <h3>Create Account 🏔️</h3>
+            <p>Join the trekking community today</p>
+        </div>
+        <div class="form-card-body">
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                <!-- Role selector -->
+                <div class="mb-4">
+                    <label class="form-label">Register as</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check flex-fill" style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.65rem 1rem;cursor:pointer;">
+                            <input class="form-check-input" type="radio" name="role" id="role_user" value="user" checked>
+                            <label class="form-check-label fw-semibold" for="role_user" style="cursor:pointer;">🧗 Trekker</label>
+                        </div>
+                        <div class="form-check flex-fill" style="border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.65rem 1rem;cursor:pointer;">
+                            <input class="form-check-input" type="radio" name="role" id="role_staff" value="staff">
+                            <label class="form-check-label fw-semibold" for="role_staff" style="cursor:pointer;">🧭 Trek Staff</label>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" required minlength="6">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
-                </form>
-                <p class="text-center mt-3 mb-0">
-                    Already have an account? <a href="{{ url_for('auth.login') }}">Login</a>
-                </p>
-            </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name"
+                        placeholder="Your full name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                        placeholder="you@example.com" required>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="At least 6 characters" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary w-100" style="padding:.65rem;">Create Account</button>
+            </form>
+
+            <hr style="border-color:var(--border); margin:1.5rem 0;">
+            <p class="text-center mb-0" style="font-size:.875rem; color:var(--text-muted);">
+                Already have an account? <a href="{{ url_for('auth.login') }}" style="color:var(--green-700);font-weight:600;">Login</a>
+            </p>
         </div>
     </div>
 </div>
+
 {% endblock %}

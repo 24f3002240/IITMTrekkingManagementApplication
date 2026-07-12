@@ -3,35 +3,41 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title mb-1">Assign Staff</h3>
-                <p class="text-muted mb-4">Trek: <strong>{{ trek.name }}</strong></p>
+    <div class="col-md-5 col-sm-10">
 
+        <div class="mb-3">
+            <a href="{{ url_for('admin.list_treks') }}" class="btn btn-outline-secondary btn-sm">← Back to Treks</a>
+        </div>
+
+        <div class="form-card animate-in">
+            <div class="form-card-header">
+                <h3>Assign Staff 🧭</h3>
+                <p>Trek: <strong style="color:var(--amber-lt);">{{ trek.name }}</strong></p>
+            </div>
+            <div class="form-card-body">
                 {% if available_staff %}
                 <form method="POST" action="{{ url_for('admin.assign_staff', trek_id=trek.id) }}">
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="staff_id" class="form-label">Select Staff Member</label>
                         <select class="form-select" id="staff_id" name="staff_id" required>
-                            <option value="" disabled selected>Choose a staff member</option>
+                            <option value="" disabled selected>Choose a staff member…</option>
                             {% for staff in available_staff %}
-                            <option value="{{ staff.id }}">{{ staff.name }} ({{ staff.email }})</option>
+                            <option value="{{ staff.id }}">{{ staff.name }} — {{ staff.email }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Assign</button>
+                    <button type="submit" class="btn btn-primary w-100" style="padding:.65rem;">
+                        ✓ Assign Staff
+                    </button>
                 </form>
                 {% else %}
                 <div class="alert alert-warning mb-0">
-                    No approved staff members available to assign.
+                    ⚠️ No approved staff members are available to assign.
                 </div>
                 {% endif %}
-
-                <a href="{{ url_for('admin.list_treks') }}" class="btn btn-outline-secondary w-100 mt-3">Back to
-                    Treks</a>
             </div>
         </div>
+
     </div>
 </div>
 {% endblock %}

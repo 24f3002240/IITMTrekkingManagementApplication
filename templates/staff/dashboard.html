@@ -2,52 +2,84 @@
 {% block title %}Staff Dashboard{% endblock %}
 
 {% block content %}
-<h3 class="mb-4">My Assigned Treks</h3>
+
+<div class="page-header">
+    <h3>🧭 My Assigned Treks</h3>
+</div>
 
 {% if my_treks %}
-{% for trek in my_treks %}
-<div class="card mb-3 shadow-sm">
-    <div class="card-body">
-        <h5 class="card-title">{{ trek.name }}</h5>
-        <p class="text-muted mb-1">Location: {{ trek.location }} | Difficulty: {{ trek.difficulty }}</p>
-        <p class="mb-2">
-            Status: <span class="badge bg-secondary">{{ trek.status }}</span>
-            &nbsp;|&nbsp; Available Slots: {{ trek.available_slots }}
-            &nbsp;|&nbsp; Registered: {{ trek_booking_counts.get(trek.id, 0) }}
-        </p>
+<div class="d-flex flex-column gap-3">
+    {% for trek in my_treks %}
+    <div class="card staff-trek-card animate-in">
+        <div class="card-body">
 
-        <form method="POST" action="{{ url_for('staff.update_trek', trek_id=trek.id) }}"
-            class="row g-2 align-items-end">
-            <div class="col-auto">
-                <label class="form-label mb-0">Status</label>
-                <select class="form-select form-select-sm" name="status">
-                    <option value="">-- no change --</option>
-                    {% if trek.status == 'Approved' %}
-                    <option value="Open">Open</option>
-                    {% elif trek.status == 'Open' %}
-                    <option value="Closed">Closed</option>
-                    <option value="Completed">Completed</option>
-                    {% elif trek.status == 'Closed' %}
-                    <option value="Open">Open</option>
-                    {% endif %}
-                </select>
+            <!-- Title + status badge -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="mb-0" style="color:var(--green-900);font-weight:700;">{{ trek.name }}</h5>
+                {% if trek.status == 'Pending' %}
+                <span class="badge bg-secondary">Pending</span>
+                {% elif trek.status == 'Approved' %}
+                <span class="badge bg-info">Approved</span>
+                {% elif trek.status == 'Open' %}
+                <span class="badge bg-success">Open</span>
+                {% elif trek.status == 'Closed' %}
+                <span class="badge bg-warning">Closed</span>
+                {% elif trek.status == 'Completed' %}
+                <span class="badge bg-dark">Completed</span>
+                {% endif %}
             </div>
-            <div class="col-auto">
-                <label class="form-label mb-0">Slots</label>
-                <input type="number" class="form-control form-control-sm" name="available_slots"
-                    value="{{ trek.available_slots }}" min="0" style="width: 100px;">
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-sm btn-primary">Update</button>
-            </div>
-        </form>
 
-        <a href="{{ url_for('staff.view_participants', trek_id=trek.id) }}" class="btn btn-sm btn-outline-primary mt-2">
-            View Participants
-        </a>
+            <!-- Meta row -->
+            <div class="trek-meta mb-3">
+                <span>📍 {{ trek.location }}</span>
+                {% if trek.difficulty == 'Easy' %}
+                <span class="badge-difficulty badge-easy" style="font-size:.72rem;">🟢 Easy</span>
+                {% elif trek.difficulty == 'Moderate' %}
+                <span class="badge-difficulty badge-moderate" style="font-size:.72rem;">🟡 Moderate</span>
+                {% else %}
+                <span class="badge-difficulty badge-hard" style="font-size:.72rem;">🔴 Hard</span>
+                {% endif %}
+                <span>🪑 <strong>{{ trek.available_slots }}</strong> slots</span>
+                <span>👥 <strong>{{ trek_booking_counts.get(trek.id, 0) }}</strong> registered</span>
+            </div>
+
+            <!-- Update form -->
+            <form method="POST" action="{{ url_for('staff.update_trek', trek_id=trek.id) }}"
+                class="row g-2 align-items-end mb-3">
+                <div class="col-auto">
+                    <label class="form-label">Status</label>
+                    <select class="form-select form-select-sm" name="status">
+                        <option value="">— no change —</option>
+                        {% if trek.status == 'Approved' %}
+                        <option value="Open">Open</option>
+                        {% elif trek.status == 'Open' %}
+                        <option value="Closed">Closed</option>
+                        <option value="Completed">Completed</option>
+                        {% elif trek.status == 'Closed' %}
+                        <option value="Open">Open</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Slots</label>
+                    <input type="number" class="form-control form-control-sm" name="available_slots"
+                        value="{{ trek.available_slots }}" min="0" style="width:100px;">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                </div>
+            </form>
+
+            <a href="{{ url_for('staff.view_participants', trek_id=trek.id) }}"
+                class="btn btn-sm btn-outline-primary">
+                👥 View Participants
+            </a>
+
+        </div>
     </div>
+    {% endfor %}
 </div>
-{% endfor %}
+
 {% else %}
 <div class="alert alert-info">No treks assigned to you yet.</div>
 {% endif %}

@@ -2,71 +2,77 @@
 {% block title %}Manage Users & Staff{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="mb-0">Manage Users & Staff</h3>
-    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+
+<div class="page-header">
+    <h3>👥 Users & Staff</h3>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">← Dashboard</a>
 </div>
 
-<form method="GET" action="{{ url_for('admin.list_users') }}" class="row g-2 mb-4">
-    <div class="col-auto">
-        <input type="text" name="search" class="form-control" placeholder="Search by name or ID" value="{{ search }}">
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Search</button>
-    </div>
-    <div class="col-auto">
-        <a href="{{ url_for('admin.list_users') }}" class="btn btn-outline-secondary">Clear</a>
-    </div>
+<!-- Filter Bar -->
+<form method="GET" action="{{ url_for('admin.list_users') }}" class="filter-bar">
+    <input type="text" name="search" class="form-control" style="max-width:260px;"
+        placeholder="🔍  Search by name or ID" value="{{ search }}">
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a href="{{ url_for('admin.list_users') }}" class="btn btn-outline-secondary">Clear</a>
 </form>
 
 {% if users %}
-<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Approval</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.role }}</td>
-            <td>
-                {% if user.approval_status == 'pending' %}
-                <span class="badge bg-warning">Pending</span>
-                {% else %}
-                <span class="badge bg-success">Approved</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if user.is_blacklisted %}
-                <span class="badge bg-danger">Blacklisted</span>
-                {% else %}
-                <span class="badge bg-secondary">Active</span>
-                {% endif %}
-            </td>
-            <td>
-                <form method="POST" action="{{ url_for('admin.toggle_blacklist', user_id=user.id) }}"
-                    onsubmit="return confirm('{{ 'Unblacklist' if user.is_blacklisted else 'Blacklist' }} {{ user.name }}?');">
-                    <button type="submit"
-                        class="btn btn-sm {{ 'btn-success' if user.is_blacklisted else 'btn-danger' }}">
-                        {{ 'Unblacklist' if user.is_blacklisted else 'Blacklist' }}
-                    </button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-wrapper animate-in">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Approval</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td class="text-muted" style="font-size:.8rem;">#{{ user.id }}</td>
+                <td class="fw-semibold">{{ user.name }}</td>
+                <td class="text-muted">{{ user.email }}</td>
+                <td>
+                    {% if user.role == 'staff' %}
+                    <span style="color:var(--green-700);font-weight:600;font-size:.82rem;">🧭 Staff</span>
+                    {% else %}
+                    <span style="color:var(--text-muted);font-size:.82rem;">🧗 Trekker</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.approval_status == 'pending' %}
+                    <span class="badge bg-warning">Pending</span>
+                    {% else %}
+                    <span class="badge bg-success">Approved</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_blacklisted %}
+                    <span class="badge bg-danger">Blacklisted</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Active</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin.toggle_blacklist', user_id=user.id) }}"
+                        onsubmit="return confirm('{{ 'Unblacklist' if user.is_blacklisted else 'Blacklist' }} {{ user.name }}?');">
+                        <button type="submit"
+                            class="btn btn-sm {{ 'btn-success' if user.is_blacklisted else 'btn-danger' }}">
+                            {{ '✓ Unblacklist' if user.is_blacklisted else '✗ Blacklist' }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <div class="alert alert-info">No users or staff match your search.</div>
 {% endif %}
+
 {% endblock %}

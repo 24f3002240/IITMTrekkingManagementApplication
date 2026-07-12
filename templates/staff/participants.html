@@ -1,35 +1,53 @@
 {% extends "base.html" %}
-{% block title %}Participants - {{ trek.name }}{% endblock %}
+{% block title %}Participants — {{ trek.name }}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="mb-0">Participants: {{ trek.name }}</h3>
-    <a href="{{ url_for('staff.dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+
+<div class="page-header">
+    <h3>👥 {{ trek.name }}</h3>
+    <a href="{{ url_for('staff.dashboard') }}" class="btn btn-outline-secondary">← Dashboard</a>
 </div>
 
-<p class="text-muted mb-4">{{ trek.location }} &middot; {{ trek.difficulty }} &middot; {{ bookings|length }} registered
-</p>
+<!-- Trek meta strip -->
+<div class="d-flex gap-3 flex-wrap mb-4" style="font-size:.85rem;color:var(--text-muted);">
+    <span>📍 {{ trek.location }}</span>
+    {% if trek.difficulty == 'Easy' %}
+    <span class="badge-difficulty badge-easy">🟢 Easy</span>
+    {% elif trek.difficulty == 'Moderate' %}
+    <span class="badge-difficulty badge-moderate">🟡 Moderate</span>
+    {% else %}
+    <span class="badge-difficulty badge-hard">🔴 Hard</span>
+    {% endif %}
+    <span style="background:var(--green-100);color:var(--green-700);padding:.2rem .6rem;border-radius:99px;font-weight:600;">
+        👥 {{ bookings|length }} registered
+    </span>
+</div>
 
 {% if bookings %}
-<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Booked On</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for booking in bookings %}
-        <tr>
-            <td>{{ booking.user.name }}</td>
-            <td>{{ booking.user.email }}</td>
-            <td>{{ booking.booking_date.strftime('%d %b %Y') }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="table-wrapper animate-in">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Booked On</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td class="text-muted" style="font-size:.8rem;">{{ loop.index }}</td>
+                <td class="fw-semibold">{{ booking.user.name }}</td>
+                <td class="text-muted">{{ booking.user.email }}</td>
+                <td class="text-muted">{{ booking.booking_date.strftime('%d %b %Y') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <div class="alert alert-info">No participants registered for this trek yet.</div>
 {% endif %}
+
 {% endblock %}
