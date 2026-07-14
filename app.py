@@ -1,10 +1,11 @@
-from flask import Flask
+from flask import Flask,redirect
 from config import Config
 from models import db,User
 from database import init_db
 from flask_login import LoginManager
 
 login_manager = LoginManager()
+
 
 def create_app():
     app = Flask(__name__)
@@ -34,6 +35,11 @@ def load_user(user_id):
 
 
 app = create_app()
+
+
+@app.route('/')
+def index():
+    return redirect('/auth/login')
 
 
 if __name__ == '__main__':
